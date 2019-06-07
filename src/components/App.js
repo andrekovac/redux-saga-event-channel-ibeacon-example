@@ -1,7 +1,4 @@
 /**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
  * @format
  * @flow
  */
@@ -12,7 +9,8 @@ import {
   StyleSheet,
   Text,
   View,
-  NativeEventEmitter
+  NativeEventEmitter,
+  TouchableOpacity
 } from "react-native";
 import Kontakt, { KontaktModule } from "react-native-kontaktio";
 
@@ -31,6 +29,7 @@ type Props = {};
 
 export default class App extends Component<Props> {
   componentDidMount() {
+    // this.startBeaconRenderingPromiseChain();
     init()
       .then(() => startDiscovery())
       .catch(error => alert("error", error));
@@ -41,12 +40,33 @@ export default class App extends Component<Props> {
     });
   }
 
+  startBeaconRenderingPromiseChain() {
+    return new Promise(resolve => {
+      init()
+        .then(() => startDiscovery())
+        .then(() => resolve())
+        .catch(error => alert("error", error));
+    });
+  }
+
+  async startBeaconRenderingAsync() {
+    try {
+      await init();
+      await startDiscovery();
+    } catch (error) {
+      alert("ERROR", error);
+    }
+  }
+
   render() {
     return (
       <View style={styles.container}>
         <Text style={styles.welcome}>Welcome to React Native!</Text>
         <Text style={styles.instructions}>To get started, edit App.js</Text>
         <Text style={styles.instructions}>{instructions}</Text>
+        <TouchableOpacity onPress={() => alert("hello")}>
+          <Text>Hello</Text>
+        </TouchableOpacity>
       </View>
     );
   }
