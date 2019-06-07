@@ -7,6 +7,7 @@
     "test": "jest"
   },
   "dependencies": {
+    "@redux-saga/testing-utils": "^1.0.2",
     "eslint": "^5.16.0",
     "react": "16.8.3",
     "react-native": "0.59.9",
@@ -26,6 +27,21 @@
     "redux-devtools": "^3.5.0"
   },
   "jest": {
-    "preset": "react-native"
+    "preset": "react-native",
+    "transform": {
+      "^.+\\.js$": "<rootDir>/node_modules/react-native/jest/preprocessor.js"
+    },
+    "setupFiles": [
+      "<rootDir>/src/test/setup.js"
+    ],
+    "testPathIgnorePatterns": [
+      "<rootDir>/node_modules/"
+    ],
+    "transformIgnorePatterns": [
+      "/node_modules/(?!react-native|react-navigation)"
+    ],
+    "moduleNameMapper": {
+      "\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$": "<rootDir>/__mocks__/fileMock.js"
+    }
   }
 }

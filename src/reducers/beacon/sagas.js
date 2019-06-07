@@ -11,7 +11,7 @@ import {
   put
 } from "redux-saga/effects";
 
-const logSth = function* logSth(): Saga<void> {
+export const logSth = function* logSth(): Saga<void> {
   yield call(console.log, "This logs sth!");
 };
 
