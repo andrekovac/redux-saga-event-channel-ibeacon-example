@@ -15,6 +15,7 @@ import {
   NativeEventEmitter
 } from "react-native";
 import Kontakt, { KontaktModule } from "react-native-kontaktio";
+
 const { init, startDiscovery } = Kontakt;
 
 const kontaktEmitter = new NativeEventEmitter(KontaktModule);
@@ -27,6 +28,7 @@ const instructions = Platform.select({
 });
 
 type Props = {};
+
 export default class App extends Component<Props> {
   componentDidMount() {
     init()
