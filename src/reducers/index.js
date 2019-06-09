@@ -1,10 +1,4 @@
-const hello = (state, action) => {
-  switch (action.type) {
-    case "HELLO":
-      return state;
-    default:
-      return state;
-  }
-};
+import { combineReducers } from "redux";
+import beacon from "./beacon/reducer";
 
-export default hello;
+export default combineReducers({ beacon });

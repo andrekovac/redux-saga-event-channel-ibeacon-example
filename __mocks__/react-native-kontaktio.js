@@ -1,3 +1,5 @@
 module.exports = {
-  stopDiscovery: () => {}
+  init: () => {},
+  stopDiscovery: () => {},
+  startDiscovery: () => {}
 };
