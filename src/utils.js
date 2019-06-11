@@ -21,6 +21,5 @@ export const getTransformedValue = (
   const number = clamp(x, boundsOld);
   const [minOld, maxOld] = boundsOld;
   const [minNew, maxNew] = boundsNew;
-  console.log({ number, minOld, maxOld, minNew, maxNew });
   return (number - (minOld - minNew)) * ((maxNew - minNew) / (maxOld - minOld));
 };

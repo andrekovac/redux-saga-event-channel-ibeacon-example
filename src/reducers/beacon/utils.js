@@ -13,7 +13,7 @@ const processBeacons = (beacons: Array<Beacon>) => {
   return beacons;
 };
 
-export const setupBeaconChannel = () =>
+export const setupBeaconDiscoveryChannel = () =>
   eventChannel<Array<Beacon>>(emitter => {
     let listener;
 
@@ -21,6 +21,23 @@ export const setupBeaconChannel = () =>
     listener =
       kontaktEmitter &&
       kontaktEmitter.addListener("didDiscoverDevices", ({ beacons }) => {
+        emitter(processBeacons(beacons));
+      });
+
+    // Unsubscribe function
+    return () => {
+      if (listener) listener.remove();
+    };
+  });
+
+export const setupBeaconRangingChannel = () =>
+  eventChannel<Array<Beacon>>(emitter => {
+    let listener;
+
+    // Add beacon listener
+    listener =
+      kontaktEmitter &&
+      kontaktEmitter.addListener("didRangeBeacons", ({ beacons, region }) => {
         emitter(processBeacons(beacons));
       });
 

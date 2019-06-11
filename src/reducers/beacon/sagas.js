@@ -2,42 +2,77 @@
 import type { Saga } from "redux-saga";
 import {
   take,
-  takeEvery,
-  select,
+  takeLatest,
   fork,
-  race,
   cancel,
   cancelled,
   call,
   put
 } from "redux-saga/effects";
 
-import { BEACON_DISCOVERY_INIT } from "./constants";
+import { BEACON_DISCOVERY_INIT, BEACON_RANGING_INIT } from "./constants";
 import {
   beaconDiscoveryStart,
   beaconDiscoveryStop,
   beaconDiscoverySuccess,
-  beaconDiscoveryError
+  beaconDiscoveryError,
+  beaconRangingStart,
+  beaconRangingStop,
+  beaconRangingError
 } from "./actions";
-import { setupBeaconChannel } from "./utils";
+import {
+  setupBeaconDiscoveryChannel,
+  setupBeaconRangingChannel
+} from "./utils";
 import Kontakt from "react-native-kontaktio";
 
 export const logSth = function* logSth(): Saga<void> {
   yield call(console.log, "This logs sth!");
 };
 
-export const beaconDiscoverySaga = function* beaconDiscoverySaga(): Saga<void> {
+export const beaconRangingSaga = function* beaconRangingSaga(): Saga<void> {
   yield call(Kontakt.init);
-  yield call(Kontakt.startDiscovery);
-  yield put(beaconDiscoveryStart());
+  // yield call(Kontakt.configure, {
+  //   invalidationAge: 2000
+  // });
+  yield call(Kontakt.startRangingBeaconsInRegion, {
+    uuid: "***REMOVED***"
+  });
+  yield put(beaconRangingStart());
 
-  const beaconChannel = yield call(setupBeaconChannel);
+  const beaconChannel = yield call(setupBeaconRangingChannel);
 
   try {
     while (true) {
-      console.log("start discovery");
+      const rangedBeacons = yield take(beaconChannel);
+
+      if (rangedBeacons) {
+        yield put(beaconRangingSuccess(rangedBeacons));
+      }
+    }
+  } catch (error) {
+    yield put(beaconRangingError(error));
+  } finally {
+    if (yield cancelled()) {
+      yield call(beaconChannel.close);
+      yield put(beaconRangingStop());
+    }
+  }
+};
+
+export const beaconDiscoverySaga = function* beaconDiscoverySaga(): Saga<void> {
+  yield call(Kontakt.init);
+  yield call(Kontakt.configure, {
+    invalidationAge: 2000
+  });
+  yield call(Kontakt.startDiscovery);
+  yield put(beaconDiscoveryStart());
+
+  const beaconChannel = yield call(setupBeaconDiscoveryChannel);
+
+  try {
+    while (true) {
       const discoveredBeacons = yield take(beaconChannel);
-      console.log("end discovery");
 
       if (discoveredBeacons) {
         yield put(beaconDiscoverySuccess(discoveredBeacons));
@@ -54,11 +89,26 @@ export const beaconDiscoverySaga = function* beaconDiscoverySaga(): Saga<void> {
 };
 
 const discoverBeaconsWatcher = function* discoverBeaconsWatcher(): Saga<void> {
-  try {
-    yield takeEvery(BEACON_DISCOVERY_INIT, beaconDiscoverySaga);
-  } catch (error) {
-    console.error(error);
-  }
+  yield takeLatest(BEACON_DISCOVERY_INIT, beaconDiscoverySaga);
 };
 
-export default [discoverBeaconsWatcher];
+/**
+ * TakeLatest implementation - as reference
+ */
+const discoverBeaconsWatcherWithTake = () =>
+  fork(function*() {
+    let lastTask;
+    while (true) {
+      yield take(BEACON_DISCOVERY_INIT);
+      if (lastTask) {
+        yield cancel(lastTask);
+      }
+      lastTask = yield fork(beaconDiscoverySaga);
+    }
+  });
+
+const rangeBeaconsWatcher = function* rangeBeaconsWatcher(): Saga<void> {
+  yield takeLatest(BEACON_RANGING_INIT, beaconRangingSaga);
+};
+
+export default [discoverBeaconsWatcher, rangeBeaconsWatcher];

@@ -13,3 +13,13 @@ export type Beacon = {|
   rssi: number,
   updatedAt: number
 |};
+
+export type RangingBeacon = {|
+  uuid: string,
+  major: number,
+  minor: number,
+  rssi: number,
+  proximity: string, // (either IMMEDIATE, NEAR, FAR or UNKNOWN)
+  // if Kontakt.io beacon this is useful, otherwise mostly -1 or similar
+  accuracy: string //(distance in meters)
+|};

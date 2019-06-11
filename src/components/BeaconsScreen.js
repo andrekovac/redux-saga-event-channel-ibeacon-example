@@ -13,51 +13,22 @@ import {
 import Kontakt, { KontaktModule } from "react-native-kontaktio";
 
 import { getTransformedValue } from "../utils";
-import { Beacon } from "../types";
+import type { Beacon, RangingBeacon } from "../types";
 
 const { height: windowHeight } = Dimensions.get("window");
 
 const kontaktEmitter = new NativeEventEmitter(KontaktModule);
 
-const instructions = Platform.select({
-  ios: "Press Cmd+R to reload,\n" + "Cmd+D or shake for dev menu",
-  android:
-    "Double tap R on your keyboard to reload,\n" +
-    "Shake or press menu button for dev menu"
-});
-
 type Props = {
   beaconDiscoveryInit: () => void,
-  beacons: Array<Beacon>,
+  beaconRangingInit: () => void,
+  discoveredBeacons: Array<Beacon>,
+  rangedBeacons: Array<RangingBeacon>,
   error: Error
 };
 
 export default class BeaconsScreen extends Component<Props> {
-  /**
-   * Works!
-   */
-  startBeaconRenderingPromiseChain() {
-    return new Promise(resolve => {
-      init()
-        .then(() => startDiscovery())
-        .then(() => resolve())
-        .catch(error => alert("error", error));
-    });
-  }
-
-  /**
-   * Works!
-   */
-  async startBeaconRenderingAsync() {
-    try {
-      await init();
-      await startDiscovery();
-    } catch (error) {
-      alert("ERROR", error);
-    }
-  }
-
-  assignColorToBeacon = uniqueId => {
+  assignColorToDiscoveredBeacon = uniqueId => {
     switch (uniqueId) {
       case "tZVH":
         return "#55DBAA";
@@ -70,10 +41,10 @@ export default class BeaconsScreen extends Component<Props> {
     }
   };
 
-  render() {
+  renderButtonbar() {
     return (
-      <View style={styles.container}>
-        <View style={styles.buttonBar}>
+      <View style={styles.buttonBar}>
+        <View style={styles.button}>
           <Button
             onPress={() => {
               this.props.beaconDiscoveryInit();
@@ -82,27 +53,79 @@ export default class BeaconsScreen extends Component<Props> {
             color="#841584"
           />
         </View>
-        <View style={styles.phone} />
-        <View style={styles.beaconField}>
-          {this.props.beacons.map(beacon => {
-            const backgroundColor = this.assignColorToBeacon(beacon.uniqueId);
-            const height = getTransformedValue(
-              beacon.rssi,
-              [-100, -1],
-              [0, windowHeight - 100]
-            );
-            return (
-              <View style={styles.beaconLine}>
-                <View style={[styles.beaconSpace, { height }]} />
-                <View style={[styles.beacon, { backgroundColor }]} />
-              </View>
-            );
-          })}
-          {/* <View style={styles.beaconLine}>
-            <View style={[styles.beaconSpace, { height: 70 }]} />
-            <View style={[styles.beacon, { backgroundColor: "green" }]} />
-          </View> */}
+        <View style={styles.button}>
+          <Button
+            onPress={() => {
+              // this.props.beaconRangingInit();
+              alert("Not implemented yet");
+            }}
+            title="Ranging"
+            color="#841584"
+          />
         </View>
+      </View>
+    );
+  }
+
+  renderBeaconFieldRanged() {
+    const { rangedBeacons } = this.props;
+    if (rangedBeacons.length === 0) {
+      return null;
+    }
+    return (
+      <View style={styles.beaconField}>
+        {rangedBeacons.map(beacon => {
+          const backgroundColor = "red";
+
+          const height = beacon.accuracy * 50;
+          return (
+            <View style={styles.beaconLine}>
+              <View style={[styles.beaconSpace, { height }]} />
+              <View style={[styles.beacon, { backgroundColor }]} />
+            </View>
+          );
+        })}
+      </View>
+    );
+  }
+
+  renderBeaconField() {
+    const { discoveredBeacons } = this.props;
+    // if (discoveredBeacons.length === 0) {
+    //   return null;
+    // }
+    return (
+      <View style={styles.beaconField}>
+        {discoveredBeacons.map(beacon => {
+          const backgroundColor = this.assignColorToDiscoveredBeacon(
+            beacon.uniqueId
+          );
+          const height = getTransformedValue(
+            beacon.rssi,
+            [-100, -1],
+            [0, windowHeight - 100]
+          );
+          console.log({ height });
+          return (
+            <View style={styles.beaconLine}>
+              <View
+                style={[styles.beaconSpace, { height: -1 * height + 300 }]}
+              />
+              <View style={[styles.beacon, { backgroundColor }]} />
+            </View>
+          );
+        })}
+      </View>
+    );
+  }
+
+  render() {
+    return (
+      <View style={styles.container}>
+        {this.renderButtonbar()}
+        <View style={styles.phone} />
+        {this.renderBeaconField()}
+        {/* {this.renderBeaconFieldRanged()} */}
       </View>
     );
   }
@@ -121,6 +144,9 @@ const styles = StyleSheet.create({
     paddingTop: 40,
     height: 80,
     backgroundColor: "lightgrey"
+  },
+  button: {
+    flex: 1
   },
   beaconField: {
     flex: 1,
@@ -142,7 +168,9 @@ const styles = StyleSheet.create({
   beacon: {
     width: 20,
     height: 20,
-    borderRadius: 50,
+    borderRadius: 20,
+    borderColor: "black",
+    borderWidth: 2,
     backgroundColor: "blue"
   },
   welcome: {

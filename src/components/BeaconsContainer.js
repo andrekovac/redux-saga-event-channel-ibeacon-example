@@ -1,20 +1,25 @@
 import { connect } from "react-redux";
 
 import BeaconScreen from "./BeaconsScreen";
-import { beaconDiscoveryInit } from "../reducers/beacon/actions";
+import {
+  beaconDiscoveryInit,
+  beaconRangingInit
+} from "../reducers/beacon/actions";
 
 const mapStateToProps = state => {
-  const { beacons, error, isSearching } = state.beacon;
+  const { discoveredBeacons, rangedBeacons, error, isSearching } = state.beacon;
 
   return {
-    beacons,
+    discoveredBeacons,
+    rangedBeacons,
     isSearching,
     error
   };
 };
 
 const mapDispatchToProps = {
-  beaconDiscoveryInit
+  beaconDiscoveryInit,
+  beaconRangingInit
 };
 
 export default connect(

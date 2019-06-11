@@ -13,8 +13,6 @@ import {
 } from "react-native";
 import BeaconsContainer from "./BeaconsContainer";
 
-type Props = {};
-
 export default class App extends Component<Props> {
   render() {
     return <BeaconsContainer />;
