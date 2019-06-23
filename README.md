@@ -57,12 +57,27 @@ The main purpose of this project is to provide an usage example of event channel
 
 ## How to run
 
-NOTE: You need a real iOS device to properly communicate with beacons.
+### Note
 
-1. Install dependencies with `yarn`
-2. Run the bundler with `yarn start`
-3. Open xcode with `open ios/iBeaconDemo.xcodeproj/`
-4. 
+* You need a real iOS device to properly communicate with beacons.
+* These instructions assume a Mac computer with react-native development being setup.
+
+### Steps to run
+
+1. Prepare your Kontakt.io beacons
+
+	Replace the `uniqueIds` value in the file `src/config.js` with the unique ids of your beacons. Add as many beacons as you want to the array.
+	
+	```javascript
+	const config: Config = {
+	  uniqueIds: ['tZVH', 'QDkt', 'ChAd'],
+	};
+	```
+	
+2. Install dependencies with `yarn`
+3. Run the bundler with `yarn start` in a separate console window or tab.
+4. Open xcode with `open ios/iBeaconDemo.xcodeproj/`
+5. Connect an iPhone and press the run arrow on the top left. 
 
 ## Test
 

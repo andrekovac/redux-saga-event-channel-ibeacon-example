@@ -1,21 +1,19 @@
 // @flow
-import React, { Component } from "react";
+import React, { Component } from 'react';
 import {
   Dimensions,
-  Platform,
   StyleSheet,
-  Text,
   View,
   NativeEventEmitter,
-  TouchableOpacity,
-  Button
-} from "react-native";
-import Kontakt, { KontaktModule } from "react-native-kontaktio";
+  Button,
+} from 'react-native';
+import Kontakt, { KontaktModule } from 'react-native-kontaktio';
 
-import { getTransformedValue } from "../utils";
-import type { Beacon, RangingBeacon } from "../types";
+import { getTransformedValue, getRandomColor } from '../utils';
+import type { Beacon, RangingBeacon } from '../types';
+import config from '../config';
 
-const { height: windowHeight } = Dimensions.get("window");
+const { height: windowHeight } = Dimensions.get('window');
 
 const kontaktEmitter = new NativeEventEmitter(KontaktModule);
 
@@ -24,20 +22,28 @@ type Props = {
   beaconRangingInit: () => void,
   discoveredBeacons: Array<Beacon>,
   rangedBeacons: Array<RangingBeacon>,
-  error: Error
+  error: Error,
 };
 
+// Default beacon ids
+const beaconUniqueIds: $ReadOnlyArray<string> = config.uniqueIds;
+
 export default class BeaconScreen extends Component<Props> {
-  assignColorToDiscoveredBeacon = uniqueId => {
-    switch (uniqueId) {
-      case "tZVH":
-        return "#55DBAA";
-      case "QDkt":
-        return "#D88552";
-      case "ChAd":
-        return "#6367D8";
-      default:
-        return "#DD56D7";
+  // Default colors
+  beaconColors: ['#55DBAA', '#D88552', '#6367D8'];
+
+  constructor(props) {
+    super(props);
+    this.beaconColors = beaconUniqueIds.map(() => getRandomColor());
+  }
+
+  assignColorToDiscoveredBeacon = (discoveredId: string) => {
+    const index = beaconUniqueIds.findIndex(id => discoveredId === id);
+
+    if (index >= 0) {
+      return this.beaconColors[index];
+    } else {
+      return '#DD56D7';
     }
   };
 
@@ -57,7 +63,7 @@ export default class BeaconScreen extends Component<Props> {
           <Button
             onPress={() => {
               // this.props.beaconRangingInit();
-              alert("Not implemented yet");
+              alert('Not implemented yet');
             }}
             title="Ranging"
             color="#841584"
@@ -75,7 +81,7 @@ export default class BeaconScreen extends Component<Props> {
     return (
       <View style={styles.beaconField}>
         {rangedBeacons.map(beacon => {
-          const backgroundColor = "red";
+          const backgroundColor = 'red';
 
           const height = beacon.accuracy * 50;
           return (
@@ -134,53 +140,53 @@ export default class BeaconScreen extends Component<Props> {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#F5FCFF"
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#F5FCFF',
   },
   buttonBar: {
-    flexDirection: "row",
-    width: "100%",
+    flexDirection: 'row',
+    width: '100%',
     paddingTop: 40,
     height: 80,
-    backgroundColor: "lightgrey"
+    backgroundColor: 'lightgrey',
   },
   button: {
-    flex: 1
+    flex: 1,
   },
   beaconField: {
     flex: 1,
-    flexDirection: "row"
+    flexDirection: 'row',
   },
   beaconLine: {
-    flexDirection: "column",
-    marginHorizontal: 5
+    flexDirection: 'column',
+    marginHorizontal: 5,
   },
   beaconSpace: {
     height: 0,
-    backgroundColor: "yellow"
+    backgroundColor: 'yellow',
   },
   phone: {
     width: 30,
     height: 50,
-    backgroundColor: "black"
+    backgroundColor: 'black',
   },
   beacon: {
     width: 20,
     height: 20,
     borderRadius: 20,
-    borderColor: "black",
+    borderColor: 'black',
     borderWidth: 2,
-    backgroundColor: "blue"
+    backgroundColor: 'blue',
   },
   welcome: {
     fontSize: 20,
-    textAlign: "center",
-    margin: 10
+    textAlign: 'center',
+    margin: 10,
   },
   instructions: {
-    textAlign: "center",
-    color: "#333333",
-    marginBottom: 5
-  }
+    textAlign: 'center',
+    color: '#333333',
+    marginBottom: 5,
+  },
 });
