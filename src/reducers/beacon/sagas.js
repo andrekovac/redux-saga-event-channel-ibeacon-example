@@ -1,5 +1,5 @@
 // @flow
-import type { Saga } from "redux-saga";
+import type { Saga } from 'redux-saga';
 import {
   take,
   takeLatest,
@@ -7,10 +7,10 @@ import {
   cancel,
   cancelled,
   call,
-  put
-} from "redux-saga/effects";
+  put,
+} from 'redux-saga/effects';
 
-import { BEACON_DISCOVERY_INIT, BEACON_RANGING_INIT } from "./constants";
+import { BEACON_DISCOVERY_INIT, BEACON_RANGING_INIT } from './constants';
 import {
   beaconDiscoveryStart,
   beaconDiscoveryStop,
@@ -18,13 +18,14 @@ import {
   beaconDiscoveryError,
   beaconRangingStart,
   beaconRangingStop,
-  beaconRangingError
-} from "./actions";
+  beaconRangingSuccess,
+  beaconRangingError,
+} from './actions';
 import {
   setupBeaconDiscoveryChannel,
-  setupBeaconRangingChannel
-} from "./utils";
-import Kontakt from "react-native-kontaktio";
+  setupBeaconRangingChannel,
+} from './utils';
+import Kontakt from 'react-native-kontaktio';
 
 export const beaconRangingSaga = function* beaconRangingSaga(): Saga<void> {
   yield call(Kontakt.init);
@@ -32,7 +33,7 @@ export const beaconRangingSaga = function* beaconRangingSaga(): Saga<void> {
   //   invalidationAge: 2000
   // });
   yield call(Kontakt.startRangingBeaconsInRegion, {
-    uuid: "***REMOVED***"
+    uuid: 'AAAAAAAA-AAAA-AAAA-AAAA-AAAAAAAAAAAA',
   });
   yield put(beaconRangingStart());
 
@@ -59,7 +60,7 @@ export const beaconRangingSaga = function* beaconRangingSaga(): Saga<void> {
 export const beaconDiscoverySaga = function* beaconDiscoverySaga(): Saga<void> {
   yield call(Kontakt.init);
   yield call(Kontakt.configure, {
-    invalidationAge: 2000
+    invalidationAge: 2000,
   });
   yield call(Kontakt.startDiscovery);
   yield put(beaconDiscoveryStart());
