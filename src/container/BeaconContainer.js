@@ -1,10 +1,10 @@
-import { connect } from "react-redux";
+import { connect } from 'react-redux';
 
-import BeaconScreen from "./BeaconsScreen";
+import BeaconScreen from '../components/BeaconScreen';
 import {
   beaconDiscoveryInit,
-  beaconRangingInit
-} from "../reducers/beacon/actions";
+  beaconRangingInit,
+} from '../reducers/beacon/actions';
 
 const mapStateToProps = state => {
   const { discoveredBeacons, rangedBeacons, error, isSearching } = state.beacon;
@@ -13,13 +13,13 @@ const mapStateToProps = state => {
     discoveredBeacons,
     rangedBeacons,
     isSearching,
-    error
+    error,
   };
 };
 
 const mapDispatchToProps = {
   beaconDiscoveryInit,
-  beaconRangingInit
+  beaconRangingInit,
 };
 
 export default connect(
