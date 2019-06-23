@@ -24,7 +24,14 @@ const initialState: BeaconState = {
   error: null,
 };
 
-export default (state: BeaconState = initialState, action) => {
+export default (
+  state: BeaconState = initialState,
+  action: {
+    type: string,
+    error?: string,
+    beacons?: Array<Beacon | RangingBeacon>,
+  }
+) => {
   switch (action.type) {
     case BEACON_DISCOVERY_SUCCESS:
       return {
