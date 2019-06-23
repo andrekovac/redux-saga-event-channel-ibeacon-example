@@ -26,10 +26,6 @@ import {
 } from "./utils";
 import Kontakt from "react-native-kontaktio";
 
-export const logSth = function* logSth(): Saga<void> {
-  yield call(console.log, "This logs sth!");
-};
-
 export const beaconRangingSaga = function* beaconRangingSaga(): Saga<void> {
   yield call(Kontakt.init);
   // yield call(Kontakt.configure, {
