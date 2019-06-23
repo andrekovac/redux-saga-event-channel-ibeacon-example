@@ -27,7 +27,7 @@ type Props = {
   error: Error
 };
 
-export default class BeaconsScreen extends Component<Props> {
+export default class BeaconScreen extends Component<Props> {
   assignColorToDiscoveredBeacon = uniqueId => {
     switch (uniqueId) {
       case "tZVH":
